@@ -6,9 +6,10 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <time.h>
+#include <unistd.h>
 
 int main(int argc, char **argv) {
-  int sock;
+  int sock, sleep;
   struct sockaddr_in dest;
   uint16_t data[24 + 4096];
   struct timespec t0, t1;
@@ -25,6 +26,9 @@ int main(int argc, char **argv) {
     tmp = strtok(NULL, ".");
   }
 
+  sleep = atoi(argv[2]);
+
+
   sock = socket(AF_INET, SOCK_DGRAM, 0);
 
   dest.sin_family = AF_INET;
@@ -36,6 +40,7 @@ int main(int argc, char **argv) {
   for (int i = 0; i < 100 * 2304; i++) {
     sendto(sock, data, 2 * (24 + 4096), 0, (struct sockaddr *)&dest,
            sizeof(dest));
+    usleep(sleep);
   }
 
   clock_gettime(CLOCK_MONOTONIC, &t1);
