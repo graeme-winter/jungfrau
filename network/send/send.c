@@ -1,6 +1,8 @@
 #include <arpa/inet.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <time.h>
@@ -11,13 +13,17 @@ int main(int argc, char **argv) {
   uint16_t data[24 + 4096];
   struct timespec t0, t1;
   double dt;
+  char *tmp;
+
+  /* horrible parsing of an IP address on the command line */
 
   uint32_t addr;
   uint8_t *_addr = (uint8_t *)&addr;
-  _addr[0] = 172;
-  _addr[1] = 23;
-  _addr[2] = 135;
-  _addr[3] = 131;
+  tmp = strtok(argv[1], ".");
+  for (int j = 0; j < 4; j++) {
+    _addr[j] = atoi(tmp);
+    tmp = strtok(NULL, ".");
+  }
 
   sock = socket(AF_INET, SOCK_DGRAM, 0);
 
