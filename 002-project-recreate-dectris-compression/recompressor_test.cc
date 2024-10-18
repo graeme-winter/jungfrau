@@ -1,3 +1,5 @@
+#include <bit>
+#include <cstring>
 #include <iostream>
 #include <random>
 #include <vector>
@@ -7,6 +9,16 @@
 extern "C" {
 #include "bitshuffle.h"
 #include "lz4.h"
+}
+
+void decompress_chunk(char *chunk, int size) {
+  uint64_t image_size;
+  uint32_t block_size;
+  std::memcpy(&image_size, chunk, sizeof(uint64_t));
+  std::memcpy(&block_size, chunk + sizeof(uint64_t), sizeof(uint32_t));
+  image_size = std::byteswap(image_size);
+  block_size = std::byteswap(block_size);
+  std::cout << image_size << " " << block_size << std::endl;
 }
 
 int main(int argc, char **argv) {
@@ -49,15 +61,28 @@ int main(int argc, char **argv) {
 
   hsize_t max_chunk = 0;
 
+  hsize_t off[ndims];
+
+  for (int j = 1; j < ndims; j++) {
+    off[j] = 0;
+  }
+
   for (int nz = 0; nz < NZ; nz++) {
     hsize_t chunk_size = 0;
-    hsize_t off[ndims];
     off[0] = nz;
-    off[1] = 0;
-    off[2] = 0;
     H5Dget_chunk_storage_size(data, off, &chunk_size);
     max_chunk = std::max(max_chunk, chunk_size);
-    std::cout << nz << " " << chunk_size << std::endl;
+  }
+
+  std::vector<char> chunk(max_chunk);
+
+  for (int nz = 0; nz < NZ; nz++) {
+    hsize_t chunk_size = 0;
+    uint32_t filter = 0;
+    off[0] = nz;
+    H5Dget_chunk_storage_size(data, off, &chunk_size);
+    H5Dread_chunk(data, H5P_DEFAULT, off, &filter, chunk.data());
+    decompress_chunk(chunk.data(), (int)chunk_size);
   }
 
   return 0;
