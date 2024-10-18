@@ -25,15 +25,26 @@ void decompress_chunk(char *chunk, int size) {
   std::memcpy(&block_size, chunk + sizeof(uint64_t), sizeof(uint32_t));
   image_size = std::byteswap(image_size);
   block_size = std::byteswap(block_size);
-  int blocks = 0, offset = sizeof(uint64_t) + sizeof(uint32_t);
+  int blocks = 0, offset = sizeof(uint64_t) + sizeof(uint32_t), total = 0;
+
+  char block[block_size], scr[block_size], out[block_size];
+
   while (offset < size) {
     std::memcpy(&compressed, chunk + offset, sizeof(uint32_t));
+    offset += sizeof(uint32_t);
     compressed = std::byteswap(compressed);
-    offset += compressed + sizeof(uint32_t);
+    int decompressed =
+        LZ4_decompress_safe(chunk + offset, block, compressed, block_size);
+    // FIXME add some activity around this
+    int shuffled = bitshuf_decode_block(
+        out, block, scr, decompressed / sizeof(uint16_t), sizeof(uint16_t));
+    total += decompressed;
+    offset += compressed;
     blocks++;
   }
 
-  std::cout << image_size << " " << block_size << " " << blocks << std::endl;
+  std::cout << image_size << " " << total << " " << block_size << " " << blocks
+            << std::endl;
 }
 
 int main(int argc, char **argv) {
