@@ -8,4 +8,4 @@ Explore network / UDP [in here](./000-project-network/)
 
 ## Compression
 
-Explore bitshuffle, lz4 [in here](./001-project-compression-decompression/)
+Explore bitshuffle, lz4 [in here](./001-project-compression-decompression/) - this is just the initial exploration, which is working out how to use the bitshuffle code from DECTRIS and lz4 on a whole block: needs to be properly framed in the way the HDF5 files are compressed.
