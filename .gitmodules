@@ -1,0 +1,6 @@
+[submodule "001-project-compression-decompression/bitshuffle"]
+	path = 001-project-compression-decompression/bitshuffle
+	url = git@github.com:kalcutter/bitshuffle.git
+[submodule "001-project-compression-decompression/lz4"]
+	path = 001-project-compression-decompression/lz4
+	url = git@github.com:lz4/lz4.git
