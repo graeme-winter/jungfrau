@@ -11,14 +11,29 @@ extern "C" {
 #include "lz4.h"
 }
 
+/* decompress_chunk
+ * decompress chunk according to the lz4 frame definitions
+ * arguments:
+ * chunk: compressed data frame
+ * size: number of bytes in compressed frame
+ */
+
 void decompress_chunk(char *chunk, int size) {
   uint64_t image_size;
-  uint32_t block_size;
+  uint32_t block_size, compressed;
   std::memcpy(&image_size, chunk, sizeof(uint64_t));
   std::memcpy(&block_size, chunk + sizeof(uint64_t), sizeof(uint32_t));
   image_size = std::byteswap(image_size);
   block_size = std::byteswap(block_size);
-  std::cout << image_size << " " << block_size << std::endl;
+  int blocks = 0, offset = sizeof(uint64_t) + sizeof(uint32_t);
+  while (offset < size) {
+    std::memcpy(&compressed, chunk + offset, sizeof(uint32_t));
+    compressed = std::byteswap(compressed);
+    offset += compressed + sizeof(uint32_t);
+    blocks ++;
+  }
+
+  std::cout << image_size << " " << block_size << " " << blocks << std::endl;
 }
 
 int main(int argc, char **argv) {
