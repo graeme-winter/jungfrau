@@ -4,3 +4,9 @@
 [submodule "001-project-compression-decompression/lz4"]
 	path = 001-project-compression-decompression/lz4
 	url = git@github.com:lz4/lz4.git
+[submodule "002-project-recreate-dectris-compression/lz4"]
+	path = 002-project-recreate-dectris-compression/lz4
+	url = git@github.com:lz4/lz4.git
+[submodule "002-project-recreate-dectris-compression/bitshuffle"]
+	path = 002-project-recreate-dectris-compression/bitshuffle
+	url = git@github.com:kalcutter/bitshuffle.git
