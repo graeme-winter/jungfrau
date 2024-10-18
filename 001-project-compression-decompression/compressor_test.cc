@@ -1,4 +1,3 @@
-#include <algorithm>
 #include <iostream>
 #include <random>
 #include <vector>
@@ -41,12 +40,11 @@ int main(int argc, char **argv) {
   float rate = 1.0;
 
   float mean = 1.0;
-  float sd = 0.5;
+  float sd = 1.0;
+
+  std::cout << "Poisson image, rate constant " << rate << std::endl;
 
   poisson_image(module, rate);
-
-  std::cout << *std::min_element(module.begin(), module.end()) << " "
-            << *std::max_element(module.begin(), module.end()) << std::endl;
 
   std::vector<char> scratch(NY * NX * sizeof(int16_t));
   std::vector<char> shuffled(NY * NX * sizeof(int16_t));
@@ -70,10 +68,10 @@ int main(int argc, char **argv) {
   std::cout << "Original size: " << NX * NY * sizeof(int16_t) << std::endl;
   std::cout << "Compressed size: " << lz4_status << std::endl;
 
-  gaussian_image(module, mean, sd);
+  std::cout << "Gaussian image, mean " << mean << " and standard deviation "
+            << sd << std::endl;
 
-  std::cout << *std::min_element(module.begin(), module.end()) << " "
-            << *std::max_element(module.begin(), module.end()) << std::endl;
+  gaussian_image(module, mean, sd);
 
   // shuffle - this is shuffling the whole block which is almost certainly wrong
   shuffle_status =
