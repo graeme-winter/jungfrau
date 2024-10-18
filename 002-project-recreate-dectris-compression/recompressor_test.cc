@@ -30,7 +30,7 @@ void decompress_chunk(char *chunk, int size) {
     std::memcpy(&compressed, chunk + offset, sizeof(uint32_t));
     compressed = std::byteswap(compressed);
     offset += compressed + sizeof(uint32_t);
-    blocks ++;
+    blocks++;
   }
 
   std::cout << image_size << " " << block_size << " " << blocks << std::endl;
