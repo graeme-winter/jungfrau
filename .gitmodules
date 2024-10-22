@@ -10,3 +10,6 @@
 [submodule "002-project-recreate-dectris-compression/bitshuffle"]
 	path = 002-project-recreate-dectris-compression/bitshuffle
 	url = git@github.com:kalcutter/bitshuffle.git
+[submodule "003-project-general-compression/bitshuffle"]
+	path = 003-project-general-compression/bitshuffle
+	url = git@github.com:kiyo-masui/bitshuffle.git
