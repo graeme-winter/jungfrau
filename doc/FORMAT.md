@@ -26,22 +26,8 @@ When the original data are captured we will have 36x ½ module streams, in some 
 
 ### Module Arrangement
 
-Since the data come from 36 half modukes, belonging to 18 full modules, we need to decide on how they are mapped between module number in the instrument and the actual index =>
+Since the data come from 36 half modukes, belonging to 18 full modules, we need to decide on how they are mapped between module number in the instrument and the actual index: the choice made here is to index them following the FORTRAN ordering though using C numbering i.e. "down" columns starting from the top-left:
 
-```
-[[ 0 12 24]
- [ 1 13 25]
- [ 2 14 26]
- [ 3 15 27]
- [ 4 16 28]
- [ 5 17 29]
- [ 6 18 30]
- [ 7 19 31]
- [ 8 20 32]
- [ 9 21 33]
- [10 22 34]
- [11 23 35]]
- ```
+![Module structure](./module.png)
 
- Treat them this way, so if we need to combine we combine `2 j` with `2 j + 1`.
- 
+This means if we need to combine data from half modules into full modules, we combine half-modules `2 j` with `2 j + 1` for module `j`.
