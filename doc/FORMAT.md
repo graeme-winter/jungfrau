@@ -20,7 +20,7 @@ If the data are masked then we can perform spot finding / initial analysis on ha
 
 ### Format vs. Time
 
-The primary data stream consists of 36x UDP streams consisting of a 48 byte header which identifies the module, position on module, frame number and row, followed by 4k pixels (8kB) of uncorrected data: this will be reassembled into half-module image arrays by the SLS detector software.
+The primary data stream consists of 36x UDP streams consisting of a [48 byte header](https://slsdetectorgroup.github.io/devdoc/udpheader.html) which identifies the module, position on module, frame number and row, followed by 4k pixels (8kB) of uncorrected data: this will be reassembled into half-module image arrays by the SLS detector software.
 
 When the original data are captured we will have 36x ½ module streams, in some form, in memory. These need to be corrected if experimental data, or be used for pedestal evaluation if they are a pedestal run.
 
