@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36" version="24.8.6">
   <diagram name="Page-1" id="0zgcI34DR16TmhRMdPE1">
-    <mxGraphModel dx="1314" dy="831" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+    <mxGraphModel dx="642" dy="703" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -100,7 +100,7 @@
         <mxCell id="1GYXw-SZhSwycH9JpS6I-32" value="" style="rounded=0;whiteSpace=wrap;html=1;fillStyle=dots;fillColor=#babdb6;" parent="1" vertex="1">
           <mxGeometry x="590" y="630" width="160" height="160" as="geometry" />
         </mxCell>
-        <mxCell id="1GYXw-SZhSwycH9JpS6I-33" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d3d7cf;fillStyle=cross-hatch;" parent="1" vertex="1">
+        <mxCell id="1GYXw-SZhSwycH9JpS6I-33" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#000000;fillStyle=hatch;" parent="1" vertex="1">
           <mxGeometry x="60" y="460" width="680" height="320" as="geometry" />
         </mxCell>
         <mxCell id="1GYXw-SZhSwycH9JpS6I-34" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
