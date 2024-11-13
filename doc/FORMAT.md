@@ -15,3 +15,25 @@ If the data are masked then we can perform spot finding / initial analysis on ha
 The primary data stream consists of 36x UDP streams consisting of a 48 byte header which identifies the module, position on module, frame number and row, followed by 4k pixels (8kB) of uncorrected data: this will be reassembled into half-module image arrays by the SLS detector software.
 
 When the original data are captured we will have 36x ½ module streams, in some form, in memory. These need to be corrected if experimental data, or be used for pedestal evaluation if they are a pedestal run.
+
+### Module Arrangement
+
+Since the data come from 36 half modukes, belonging to 18 full modules, we need to decide on how they are mapped between module number in the instrument and the actual index =>
+
+```
+[[ 0 12 24]
+ [ 1 13 25]
+ [ 2 14 26]
+ [ 3 15 27]
+ [ 4 16 28]
+ [ 5 17 29]
+ [ 6 18 30]
+ [ 7 19 31]
+ [ 8 20 32]
+ [ 9 21 33]
+ [10 22 34]
+ [11 23 35]]
+ ```
+
+ Treat them this way, so if we need to combine we combine `2 j` with `2 j + 1`.
+ 
