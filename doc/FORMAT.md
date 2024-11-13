@@ -6,4 +6,12 @@ Since negative values are possible (if rare) the only logical option is to selec
 
 ## Format on Disk
 
-The primary data come in the form of 4 streams each consisting of 256x1024 pixel arrays. These include double sized pixels around the edge of every module which should be ignored, or doubled in one or two directions as needed if the data are considered to be useful.
+The primary data come in the form of 4 streams each consisting of 256x1024 pixel arrays. These include double sized pixels around the edge of every module which should be ignored, or doubled in one or two directions as needed if the data from those pixels are are [considered to be useful](https://github.com/graeme-winter/jungfrau/issues/19). The fundamental data size will therefore be 1024x256 if we are keeping the data the same shape as the readouts, or 1028x256 if we are doubling pixels and ignoring those at the edge of the module (masking optional.) N.B. for half-modules this will be vertically asymmetric, so be prepared for some apparent oddness.
+
+If the data are masked then we can perform spot finding / initial analysis on half modules with no loss of fidelity. If we are keeping the big pixels, we will need to bring together the arrays from the top and bottom of each module to correctly interpret the data.
+
+### Format vs. Time
+
+The primary data stream consists of 36x UDP streams consisting of a 48 byte header which identifies the module, position on module, frame number and row, followed by 4k pixels (8kB) of uncorrected data: this will be reassembled into half-module image arrays by the SLS detector software.
+
+When the original data are captured we will have 36x ½ module streams, in some form, in memory. These need to be corrected if experimental data, or be used for pedestal evaluation if they are a pedestal run.
