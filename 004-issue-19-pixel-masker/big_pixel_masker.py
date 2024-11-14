@@ -17,14 +17,32 @@ import os
 import shutil
 import sys
 
+import hdf5plugin
 import h5py
+
+import tqdm
 
 
 def mask_image(image):
-    pass
+    """In place over-write unpacked big pixels with values of -1"""
+
+    for my in range(6):
+        for mx in range(3):
+            oy = my * (512 + 38)
+            ox = mx * (1028 + 12)
+
+            # horizontal bar
+            image[oy + 254 : oy + 258, ox : ox + 1028] = 0xFFFF
+
+            # 3 x vertical bars
+            image[oy : oy + 512, ox + 254 : ox + 258] = 0xFFFF
+            image[oy : oy + 512, ox + 512 : ox + 516] = 0xFFFF
+            image[oy : oy + 512, ox + 770 : ox + 774] = 0xFFFF
 
 
 def mask_big_pixels(filename):
+    """Mask the unpacked big pixels on every frame of an Eiger 9M data set"""
+
     with h5py.File(filename, "r+") as f:
         assert "data" in f
         d = f["data"]
@@ -32,9 +50,9 @@ def mask_big_pixels(filename):
         assert ny == 3262
         assert nx == 3108
 
-        for j in range(nz):
+        for j in tqdm.tqdm(range(nz)):
             i = d[j, :, :]
-            i = mask_image(i)
+            mask_image(i)
             d[j, :, :] = i
 
 
