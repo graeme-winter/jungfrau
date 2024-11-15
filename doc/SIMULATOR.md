@@ -119,3 +119,44 @@ though maybe the "multi receiver" is what will be needed here, then finally use 
 ```
 
 N.B. this sets up a shared memory area which handles much of the state.
+
+## Test with the Grace Hopper
+
+New configuration needed to allow the routing:
+
+```
+hostname 172.23.124.211+
+
+rx_hostname 172.23.124.49+
+
+0:udp_srcip 172.23.124.211
+0:udp_dstip 172.23.124.49
+0:udp_dstport 30001
+
+0:udp_srcip2 172.23.124.211
+0:udp_dstip2 172.23.124.49
+0:udp_dstport2 30002
+
+numinterfaces 2
+
+fwrite 0
+
+rx_zmqfreq 1
+rx_zmqhwm 50000
+rx_zmqstream 1
+
+temp_control 1
+temp_threshold 55
+
+exptime 0.0005
+frames 1000
+speed full_speed
+
+fformat binary
+fwrite 1
+fpath /dev/shm/gw
+
+powerchip 1
+```
+
+N.B. be sure to enable jumbo frames on both ends i.e. `ifconfig <interface> mtu 9000`.
