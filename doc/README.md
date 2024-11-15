@@ -14,6 +14,8 @@ The data capture with this detector is thesingle biggest challenge. Initial plan
 2. [build test system](https://github.com/graeme-winter/jungfrau/issues/5)
 3. confirm that we can consume 36 x 10Gb/s streams on one grace hopper system
 
+Detailed discussion [in here](./DAtA_CAPTURE.md)
+
 ## Pedestal Calculation
 
 Want to be able to perform real-time recalculation of the pedestal values. On a GPU this will require [algorithms to estimate the median](https://github.com/graeme-winter/jungfrau/issues/22). This will also need to work with [both pedestal modes](https://github.com/graeme-winter/jungfrau/issues/17) though the medians are likely to be fairly similar. This will also need to recompute a pixel reliability mask on-the-fly though to some extent that will also need flood field data so define more than one calibration mode for acquisition.
