@@ -122,19 +122,19 @@ N.B. this sets up a shared memory area which handles much of the state.
 
 ## Test with the Grace Hopper
 
-New configuration needed to allow the routing:
+Connected up the Connext-X 7, hard coded the IP addresses (which I will need to re-hard-code). New configuration needed to allow the routing:
 
 ```
-hostname 172.23.124.211+
+hostname 192.168.200.200+
 
-rx_hostname 172.23.124.49+
+rx_hostname 192.168.200.201+
 
-0:udp_srcip 172.23.124.211
-0:udp_dstip 172.23.124.49
+0:udp_srcip 192.168.200.200
+0:udp_dstip 192.168.200.201
 0:udp_dstport 30001
 
-0:udp_srcip2 172.23.124.211
-0:udp_dstip2 172.23.124.49
+0:udp_srcip2 192.168.200.200
+0:udp_dstip2 192.168.200.201
 0:udp_dstport2 30002
 
 numinterfaces 2
@@ -149,7 +149,8 @@ temp_control 1
 temp_threshold 55
 
 exptime 0.0005
-frames 1000
+period 0.0005
+frames 10000
 speed full_speed
 
 fformat binary
@@ -160,3 +161,18 @@ powerchip 1
 ```
 
 N.B. be sure to enable jumbo frames on both ends i.e. `ifconfig <interface> mtu 9000`.
+
+Should result in something like:
+
+```
+- 06:31:43.768 INFO: Master File: /dev/shm/gw/run_master_3.json
+- 06:31:43.774 INFO: Status: finished
+- 06:31:43.774 INFO: Summary of Port 30001
+	Missing Packets		: 0
+	Complete Frames		: 10000
+	Last Frame Caught	: 43000
+- 06:31:43.774 INFO: Summary of Port 30002
+	Missing Packets		: 0
+	Complete Frames		: 10000
+	Last Frame Caught	: 43000
+```
