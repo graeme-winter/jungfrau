@@ -42,7 +42,13 @@ with h5py.File(sys.argv[1], "r") as f:
             break
     assert mx != 0 and my != 0, (mx, my)
 
+    fouts = [
+        open(f"{sys.argv[2]}/stream_{j:02d}.raw", "wb") for j in range(my * mx * 2)
+    ]
+
     for i in tqdm.tqdm(range(data.shape[0])):
+        header = numpy.zeros((14,), dtype=numpy.uint64)
+        header[0] = i
         stack = numpy.zeros(dtype=numpy.uint16, shape=(my * mx, 512, 1024))
         frame = data[i][()]
         for j in range(my * mx):
@@ -55,4 +61,16 @@ with h5py.File(sys.argv[1], "r") as f:
             module = uncorrect_module(module)
             stack[j] = module
 
-        stack = stack.reshape((my * mx * 512 * 1024,))
+        # reshape into half-modules
+        stack = stack.reshape(
+            (
+                my * mx * 2,
+                256 * 1024,
+            )
+        )
+        for j in range(my * mx * 2):
+            fouts[j].write(header.tobytes())
+            fouts[j].write(stack[j].tobytes())
+
+    for fout in fouts:
+        fout.close()
