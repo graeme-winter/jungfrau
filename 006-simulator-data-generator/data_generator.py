@@ -25,6 +25,7 @@ P2 = 15000
 def count_to_adc(stack):
     """Convert counts back to ADC readouts and gain mode"""
     mask = stack < 0xFFFE
+    stack *= mask
     g0 = (stack >= 0) & (stack < 25)
     g1 = (stack >= 25) & (stack < 700)
     g2 = stack >= 700
@@ -32,9 +33,10 @@ def count_to_adc(stack):
         (stack * g0 * G0E + g0 * P0)
         + (stack * g1 * G1E + g1 * P1)
         + (stack * g2 * G2E + g2 * P2)
-    )
+    ).astype(numpy.uint16)
+    result += g1 * (1 << 14) + g2 * (3 << 14)
     result = mask * result
-    return result.astype(numpy.uint16)
+    return result
 
 
 def uncorrect_module(module):
