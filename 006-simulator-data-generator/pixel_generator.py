@@ -59,27 +59,15 @@ def sum_big_pixels(image):
                         ny * 256 + 1 : ny * 256 + 255, nx * 256 + 1 : nx * 256 + 255
                     ] = source[
                         ny * 258 + 2 : ny * 258 + 256,
-                        nx * 258 + 2 : ox + nx * 258 + 256,
+                        nx * 258 + 2 : nx * 258 + 256,
                     ]
+                    # FIXME deal with the big pixels
                     # horizontal bar: beware annoying
                     # vertical bars: also annoying
 
+            result[my * 512 : my * 512 + 512, mx * 1024 : mx * 1024 + 1024] = module
 
-def mask_image(image):
-    """In place over-write unpacked big pixels with values of -1"""
-
-    for my in range(6):
-        for mx in range(3):
-            oy = my * (512 + 38)
-            ox = mx * (1028 + 12)
-
-            # horizontal bar
-            image[oy + 254 : oy + 258, ox : ox + 1028] = 0xFFFF
-
-            # 3 x vertical bars
-            image[oy : oy + 512, ox + 254 : ox + 258] = 0xFFFF
-            image[oy : oy + 512, ox + 512 : ox + 516] = 0xFFFF
-            image[oy : oy + 512, ox + 770 : ox + 774] = 0xFFFF
+    return result
 
 
 def mask_big_pixels(filename):
@@ -94,19 +82,10 @@ def mask_big_pixels(filename):
 
         for j in tqdm.tqdm(range(nz)):
             i = d[j, :, :]
-            mask_image(i)
-            d[j, :, :] = i
+            j = sum_big_pixels(i)
 
 
 def main(filename):
-
-    assert filename.endswith(".h5")
-    copy = f"{filename[:-3]}.bck"
-
-    assert os.path.exists(filename)
-    assert not os.path.exists(copy)
-
-    shutil.copyfile(filename, copy)
 
     mask_big_pixels(filename)
 
