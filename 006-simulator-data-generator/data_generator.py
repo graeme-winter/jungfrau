@@ -34,7 +34,7 @@ def count_to_adc(stack):
         + (stack * g1 * G1E + g1 * P1)
         + (stack * g2 * G2E + g2 * P2)
     ).astype(numpy.uint16)
-    result += g1 * (1 << 14) + g2 * (3 << 14)
+    result += (g1 * (1 << 14) + g2 * (3 << 14)).astype(numpy.uint16)
     result = mask * result
     return result
 
