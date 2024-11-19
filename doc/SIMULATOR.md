@@ -6,7 +6,7 @@ The [SLS detector software](https://slsdetectorgroup.github.io/devdoc/) includes
 git clone git@github.com:slsdetectorgroup/slsDetectorPackage.git
 mkdir slsDetectorPackage-build
 cd slsDetectorPackage-build
-cmake -DSLS_USE_SIMULATOR=ON ../slsDetectorPackage
+cmake -DCMAKE_INSTALL_PREFIX=${HOME}/sls -DSLS_USE_SIMULATOR=ON ../slsDetectorPackage
 make
 ```
 
