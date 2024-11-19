@@ -43,3 +43,7 @@ This can be used to help convert from "real" data from an Eiger to an estimate o
 ## On Disk Format
 
 The data format captured by SLS detector results in a file for each module or half-module with a sequence of binary data blocks of 112 byte header (for half-modules) followed by the raw pixel readouts `[gain][ADC readout]` for the half module. The header contains the frame number, a time stamp and some other info e.g. the module position in the detector, as [documented here](https://slsdetectorgroup.github.io/devdoc/udpheader.html). This header is 48 bytes: the frame header in the file contains a further 64 bytes defining the status of the 64 pixel rows, since each half-module is made from 64 groups of four lines of pixels.
+
+## Full System
+
+[Implemented](../006-simulator-data-generator/data_generator.py) in a very slow Python script which could almost certainly be sped up by an order of magnitude or more by being more sensible, but generally appears to at least _look_ right. Be aware that the decompressed data streams are _huge_: 18MB / frame so ~54GB for a 3,600 image data set.
