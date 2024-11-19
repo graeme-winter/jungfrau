@@ -28,6 +28,6 @@ for j in range(160):
 
 Gives useful output:
 
-![ADC readout vs. counts(./ADC.png)
+![ADC readout vs. counts](./ADC.png)
 
 This can be used to help convert from "real" data from an Eiger to an estimate of the readout value, prefixed with the gain mode bits (0, 1, 3).
