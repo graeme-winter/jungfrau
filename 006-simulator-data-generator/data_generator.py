@@ -11,6 +11,24 @@ gy, gx = 38, 12
 mx = 0
 my = 0
 
+
+def uncorrect_module(module):
+    assert module.shape == (512, 1028), module.shape
+    result = numpy.zeros((512, 1024), dtype=numpy.uint16)
+
+    for ny in range(2):
+        for nx in range(4):
+            # middle of the ASIC
+            result[
+                ny * 256 + 1 : ny * 256 + 255, nx * 256 + 1 : nx * 256 + 255
+            ] = module[
+                ny * 258 : ny * 258 + 254,
+                nx * 258 : nx * 258 + 254,
+            ]
+
+    return result
+
+
 with h5py.File(sys.argv[1], "r") as f:
     total = None
 
@@ -25,7 +43,7 @@ with h5py.File(sys.argv[1], "r") as f:
     assert mx != 0 and my != 0, (mx, my)
 
     for i in tqdm.tqdm(range(data.shape[0])):
-        stack = numpy.zeros(dtype=numpy.uint16, shape=(my * mx, ny, nx))
+        stack = numpy.zeros(dtype=numpy.uint16, shape=(my * mx, 512, 1024))
         frame = data[i][()]
         for j in range(my * mx):
             x = j // my
@@ -34,6 +52,7 @@ with h5py.File(sys.argv[1], "r") as f:
             module = frame[
                 y * (ny + gy) : y * (ny + gy) + ny, x * (nx + gx) : x * (nx + gx) + nx
             ]
+            module = uncorrect_module(module)
             stack[j] = module
 
-        stack = stack.reshape((my * mx * ny * nx,))
+        stack = stack.reshape((my * mx * 512 * 1024,))
