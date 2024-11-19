@@ -124,22 +124,31 @@ N.B. this sets up a shared memory area which handles much of the state.
 
 Connected up the Connext-X 7, hard coded the IP addresses (which I will need to re-hard-code). New configuration needed to allow the routing:
 
-```
-hostname 192.168.200.200+
+# jcu01 - run
+# ./jungfrauDetectorServer_virtual -p 2000
+# ./jungfrauDetectorServer_virtual -p 2010
+hostname 192.168.200.200:2000+192.168.200.200:2010+
 
-rx_hostname 192.168.200.201+
+# gh01 - run slsMultiReceiver 3000 2 0
+rx_hostname 192.168.200.201:3000+192.168.200.201:3001+
 
 0:udp_srcip 192.168.200.200
 0:udp_dstip 192.168.200.201
-0:udp_dstport 30001
+0:udp_dstport 30000
 
 0:udp_srcip2 192.168.200.200
 0:udp_dstip2 192.168.200.201
-0:udp_dstport2 30002
+0:udp_dstport2 30001
+
+1:udp_srcip 192.168.200.200
+1:udp_dstip 192.168.200.201
+1:udp_dstport 30010
+
+1:udp_srcip2 192.168.200.200
+1:udp_dstip2 192.168.200.201
+1:udp_dstport2 30011
 
 numinterfaces 2
-
-fwrite 0
 
 rx_zmqfreq 1
 rx_zmqhwm 50000
@@ -148,11 +157,15 @@ rx_zmqstream 1
 temp_control 1
 temp_threshold 55
 
+# exposure time, cycle time to use
 exptime 0.0005
 period 0.0005
-frames 10000
-speed full_speed
+frames 1000
 
+# enable both network channels
+readoutspeed full_speed
+
+# save binary data (112 byte header / frame)
 fformat binary
 fwrite 1
 fpath /dev/shm/gw
@@ -165,14 +178,45 @@ N.B. be sure to enable jumbo frames on both ends i.e. `ifconfig <interface> mtu 
 Should result in something like:
 
 ```
-- 06:31:43.768 INFO: Master File: /dev/shm/gw/run_master_3.json
-- 06:31:43.774 INFO: Status: finished
-- 06:31:43.774 INFO: Summary of Port 30001
+- 09:03:12.961 INFO: [30000]:  Packet_Loss:0 (0%)  Used_Fifo_Max_Level:0 	Free_Slots_Min_Level:2499 	Current_Frame#:11001
+- 09:03:12.961 INFO: [30001]:  Packet_Loss:0 (0%)  Used_Fifo_Max_Level:0 	Free_Slots_Min_Level:2499 	Current_Frame#:11001
+- 09:03:13.079 INFO: [30010]:  Packet_Loss:0 (0%)  Used_Fifo_Max_Level:0 	Free_Slots_Min_Level:2499 	Current_Frame#:11001
+- 09:03:13.079 INFO: [30011]:  Packet_Loss:0 (0%)  Used_Fifo_Max_Level:0 	Free_Slots_Min_Level:2499 	Current_Frame#:11001
+- 09:03:13.080 INFO: Stopping Receiver
+- 09:03:13.080 INFO: Status: Transmitting
+- 09:03:13.080 INFO: Stopping Receiver
+- 09:03:13.080 INFO: Status: Transmitting
+- 09:03:13.080 INFO: Shut down of UDP port 30000
+- 09:03:13.081 INFO: Shut down of UDP port 30010
+- 09:03:13.081 INFO: Shut down of UDP port 30001
+- 09:03:13.081 INFO: Shut down of UDP port 30011
+- 09:03:13.091 INFO: Closed UDP port 30000
+- 09:03:13.091 INFO: Closed UDP port 30001
+- 09:03:13.091 INFO: Closed UDP port 30010
+- 09:03:13.091 INFO: Closed UDP port 30011
+- 09:03:13.091 INFO: Master File: /dev/shm/gw/run_master_1.json
+- 09:03:13.096 INFO: Status: finished
+- 09:03:13.096 INFO: Summary of Port 30010
 	Missing Packets		: 0
 	Complete Frames		: 10000
-	Last Frame Caught	: 43000
-- 06:31:43.774 INFO: Summary of Port 30002
+	Last Frame Caught	: 11000
+- 09:03:13.096 INFO: Summary of Port 30011
 	Missing Packets		: 0
 	Complete Frames		: 10000
-	Last Frame Caught	: 43000
+	Last Frame Caught	: 11000
+- 09:03:13.096 INFO: Receiver Stopped
+- 09:03:13.096 INFO: Status: finished
+- 09:03:13.096 INFO: Status: idle
+- 09:03:13.096 INFO: Summary of Port 30000
+	Missing Packets		: 0
+	Complete Frames		: 10000
+	Last Frame Caught	: 11000
+- 09:03:13.096 INFO: Summary of Port 30001
+	Missing Packets		: 0
+	Complete Frames		: 10000
+	Last Frame Caught	: 11000
+- 09:03:13.096 INFO: Receiver Stopped
+- 09:03:13.096 INFO: Status: idle
+- 09:03:13.096 INFO: File Index: 2
+- 09:03:13.096 INFO: File Index: 2
 ```
