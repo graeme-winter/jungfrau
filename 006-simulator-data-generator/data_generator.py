@@ -11,6 +11,31 @@ gy, gx = 38, 12
 mx = 0
 my = 0
 
+# hard coded for i04-1 - it'll do
+
+G0E = 40 * 13.504
+G1E = -1.5 * 13.504
+G2E = -0.1 * 13.504
+
+P0 = 3000
+P1 = 15000
+P2 = 15000
+
+
+def count_to_adc(stack):
+    """Convert counts back to ADC readouts and gain mode"""
+    mask = stack < 0xFFFE
+    g0 = (stack >= 0) & (stack < 25)
+    g1 = (stack >= 25) & (stack < 700)
+    g2 = stack >= 700
+    result = (
+        (stack * g0 * G0E + g0 * P0)
+        + (stack * g1 * G1E + g1 * P1)
+        + (stack * g2 * G2E + g2 * P2)
+    )
+    result = mask * result
+    return result.astype(numpy.uint16)
+
 
 def uncorrect_module(module):
     assert module.shape == (512, 1028), module.shape
@@ -68,6 +93,7 @@ with h5py.File(sys.argv[1], "r") as f:
                 256 * 1024,
             )
         )
+        stack = count_to_adc(stack)
         for j in range(my * mx * 2):
             fouts[j].write(header.tobytes())
             fouts[j].write(stack[j].tobytes())
