@@ -248,6 +248,7 @@ to use for driving the simulation. Need to map IP addresses to module / ports =>
 Machine:
 
 |        | Column 0 | Column 1 | Column 2 |
+|--------|----------|----------|----------|
 | Row 0  |   JTU1   |   JTU2   |   JTU3   |
 | Row 1  |   JTU1   |   JTU2   |   JTU3   |
 | Row 2  |   JTU1   |   JCU    |   JTU4   |
