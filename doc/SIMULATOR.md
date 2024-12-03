@@ -235,3 +235,24 @@ Improvements proposed:
 - pre-computing most of the header then just updating a single frame counter seems easy
 
 Will work towards these in a branch of the slsDetector package.
+
+## Simulator Machines
+
+We have:
+
+- 4 x com15 node each with 2 x 40GbE
+- 1 x JCU
+
+to use for driving the simulation. Need to map IP addresses to module / ports =>
+
+Machine:
+
+|        | Column 0 | Column 1 | Column 2 |
+| Row 0  |   JTU1   |   JTU2   |   JTU3   |
+| Row 1  |   JTU1   |   JTU2   |   JTU3   |
+| Row 2  |   JTU1   |   JCU    |   JTU4   |
+| Row 3  |   JTU1   |   JCU    |   JTU4   |
+| Row 4  |   JTU2   |   JTU3   |   JTU4   |
+| Row 5  |   JTU2   |   JTU3   |   JTU4   |
+
+Here the first two "JTU" entries are on one interface, the second two on the other interface, and the first of these on one port, the second on another port, so need to map all the ports and interfaces correctly to have this work _right_.
