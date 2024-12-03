@@ -124,6 +124,7 @@ N.B. this sets up a shared memory area which handles much of the state.
 
 Connected up the Connext-X 7, hard coded the IP addresses (which I will need to re-hard-code). New configuration needed to allow the routing:
 
+```
 # jcu01 - run
 # ./jungfrauDetectorServer_virtual -p 2000
 # ./jungfrauDetectorServer_virtual -p 2010
@@ -220,3 +221,17 @@ Should result in something like:
 - 09:03:13.096 INFO: File Index: 2
 - 09:03:13.096 INFO: File Index: 2
 ```
+
+## Simulator Enhancements
+
+Want to be able to read data in to the simulator to transmit, either generated from Eiger data by performing an "[inverse correction](./PIXEL_SIMULATION.md)" or data captured from a real JUNGFRAU data collection.
+
+The simulator is built around simulating _modules_ i.e. one simulator tries to generate the data for one module of 512x1024 pixels. The construction of the header is pretty basic, and done in a tight loop, and (by default) different for every pixel which is very expensive and prevents the system from going at full speed. In addition, there are issues with the way that the delays are calculated.
+
+Improvements proposed:
+
+- produce the chunks on a cleaner clock i.e. compute the times when these should be emitted at the _start_ of the scan then for each frame, wait until that time has passed
+- pre-compute data for emission, assuming enough memory is available. For one of the old com15 nodes we have ~40GB of memory free, which at 1MB / frame should allow for ~20k frames - looping this though is fine so really only need ~3600 frames or something then re-transmit
+- pre-computing most of the header then just updating a single frame counter seems easy
+
+Will work towards these in a branch of the slsDetector package.
