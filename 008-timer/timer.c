@@ -1,9 +1,16 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 
 int main(int argc, char **argv) {
-  int microseconds = 500;
-  int ticks = 3600;
+  int microseconds = 500, ticks = 0;
+
+  if (argc == 1) {
+    fprintf(stderr, "%s ticks\n", argv[0]);
+    return 1;
+  }
+
+  ticks = atoi(argv[1]);
 
   struct timespec t0, tn;
 
