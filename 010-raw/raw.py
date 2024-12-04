@@ -7,6 +7,7 @@ import sys
 import h5py
 import tqdm
 
+
 def main(filenames):
     assert len(filenames) == 4
     datasets = [h5py.File(filename)["data"] for filename in filenames]
@@ -28,5 +29,5 @@ def main(filenames):
     for fout in fouts:
         fout.close()
 
-main(sys.argv[1:])
 
+main(sys.argv[1:])
