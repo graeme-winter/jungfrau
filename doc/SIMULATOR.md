@@ -257,3 +257,29 @@ Machine:
 | Row 5  |   JTU2   |   JTU3   |   JTU4   |
 
 Here the first two "JTU" entries are on one interface, the second two on the other interface, and the first of these on one port, the second on another port, so need to map all the ports and interfaces correctly to have this work _right_.
+
+Machine network / IP address hard coding:
+
+| Machine | Interface |   IP Addresss   |
+|---------|-----------|-----------------|
+| jcu01   | p5p2      | 192.168.200.200 |
+| jtu-01  | p2p1      | 192.168.200.211 |
+| jtu-01  | p2p2      | 192.168.200.221 |
+| jtu-02  | p2p1      | 192.168.200.212 |
+| jtu-02  | p2p2      | 192.168.200.222 |
+| jtu-03  | p2p1      | 192.168.200.213 |
+| jtu-03  | p2p2      | 192.168.200.223 |
+| jtu-04  | p2p1      | 192.168.200.214 |
+| jtu-05  | p2p2      | 192.168.200.224 |
+
+All on `/255` mask, with settings kin to
+
+```
+5: p5p2: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9000 qdisc mq state UP group default qlen 1000
+    link/ether 98:03:9b:89:c1:a7 brd ff:ff:ff:ff:ff:ff
+    altname enp134s0f1
+    inet 192.168.200.200/24 brd 192.168.200.255 scope global noprefixroute p5p2
+       valid_lft forever preferred_lft forever
+    inet6 fe80::9a03:9bff:fe89:c1a7/64 scope link
+       valid_lft forever preferred_lft forever
+```
