@@ -3,7 +3,7 @@ import sys
 
 import zmq
 
-host = "192.168.200.201"
+host = "0.0.0.0"
 port = int(sys.argv[1])
 
 context = zmq.Context()
