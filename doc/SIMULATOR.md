@@ -283,3 +283,7 @@ All on `/255` mask, with settings kin to
     inet6 fe80::9a03:9bff:fe89:c1a7/64 scope link
        valid_lft forever preferred_lft forever
 ```
+
+## 9M Simulation
+
+This needs a [long config file](../005-simulator-config/9m-simulator.conf) but works correctly - if slowly. Also depends on using a modified version of the virtual server hacked around [in a fork of the repo](https://github.com/graeme-winter/slsDetectorPackage/pull/1)
