@@ -330,3 +330,7 @@ Since a 1M works fine, we should be able to do a 1M from two machines, right? Ye
 ```
 
 Once you are used to configuring these beasties, this is not really confusing: we are just pointing to the interfaces on the machines. This makes me think that the machines are not powerful enough to drive 80Gb/s out.
+
+## 5M Simulation
+
+OK, so we can do a 2M at flat out, can we pull the same trick with a 5? Won't go flat out, but does work... just need to top out at 0.8ms cycle time.
