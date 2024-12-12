@@ -286,4 +286,17 @@ All on `/255` mask, with settings kin to
 
 ## 9M Simulation
 
-This needs a [long config file](../005-simulator-config/9m-simulator.conf) but works correctly - if slowly. Also depends on using a modified version of the virtual server hacked around [in a fork of the repo](https://github.com/graeme-winter/slsDetectorPackage/pull/1)
+This needs a [long config file](../005-simulator-config/9m-simulator.conf) but works correctly - if slowly. Also depends on using a modified version of the virtual server hacked around [in a fork of the repo](https://github.com/graeme-winter/slsDetectorPackage/pull/1) - it fails if you try to run at 1kHz which should in theory fit inside the available network switches.
+
+## 2M Simulation
+
+This also fails at full speed from one machine, using two full interfaces. To reproduce this failure:
+
+1. ssh into i24-jtu-01, run 4 login sessions, each will run one full module of the simulation - run as `jungfrauDetectorServer_virtual -p PORT` where `PORT` is 2020, 2030, 2040, 2050 (as configured in the 2M configuration file.)
+2. ssh into bl24i-sc-gh-01, run `slsMultiReceiver 3000 4 0` - this will spin up four receivers which will be configured with...
+
+At this point the desktop may look like:
+
+![Desktop image](./simulator-desktop.png)
+
+3. on an i24 machine run `sls_detector_put config ~/git/jungfrau/005-simulator-config/2m-simulator-1.conf` This will produce a lot of output... you can then trigger acquisition with `sls_detector_acquire` which should work fine at 1000Hz (1.0 / (period + exptime)). Lowering the exposure time and period is sufficient with e.g. `sls_detector_put period 0.00025` is enough to trigger packet loss...
