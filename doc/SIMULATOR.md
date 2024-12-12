@@ -290,13 +290,43 @@ This needs a [long config file](../005-simulator-config/9m-simulator.conf) but w
 
 ## 2M Simulation
 
+### 2M from one machine, two interfaces
+
 This also fails at full speed from one machine, using two full interfaces. To reproduce this failure:
 
 1. ssh into i24-jtu-01, run 4 login sessions, each will run one full module of the simulation - run as `jungfrauDetectorServer_virtual -p PORT` where `PORT` is 2020, 2030, 2040, 2050 (as configured in the 2M configuration file.)
-2. ssh into bl24i-sc-gh-01, run `slsMultiReceiver 3000 4 0` - this will spin up four receivers which will be configured with...
+2. ssh into bl24i-sc-gh-01, run `slsMultiReceiver 3000 4 0` - this will spin up four receivers which will be configured with... (watch the output of this window for errors)
 
 At this point the desktop may look like:
 
 ![Desktop image](./simulator-desktop.png)
 
 3. on an i24 machine run `sls_detector_put config ~/git/jungfrau/005-simulator-config/2m-simulator-1.conf` This will produce a lot of output... you can then trigger acquisition with `sls_detector_acquire` which should work fine at 1000Hz (1.0 / (period + exptime)). Lowering the exposure time and period is sufficient with e.g. `sls_detector_put period 0.00025` is enough to trigger packet loss...
+
+### 2M from two machines, one interface on each
+
+Since a 1M works fine, we should be able to do a 1M from two machines, right? Yes, yes we can. This bodes well. You need to apply some diffs to the 2M config tho:
+
+```
+< hostname 192.168.200.211:2020+192.168.200.211:2030+192.168.200.212:2040+192.168.200.212:2050+
+---
+> hostname 192.168.200.211:2020+192.168.200.211:2030+192.168.200.221:2020+192.168.200.221:2030+
+27c27
+< 2:udp_srcip 192.168.200.212
+---
+> 2:udp_srcip 192.168.200.221
+31c31
+< 2:udp_srcip2 192.168.200.212
+---
+> 2:udp_srcip2 192.168.200.221
+35c35
+< 3:udp_srcip 192.168.200.212
+---
+> 3:udp_srcip 192.168.200.221
+39c39
+< 3:udp_srcip2 192.168.200.212
+---
+> 3:udp_srcip2 192.168.200.221
+```
+
+Once you are used to configuring these beasties, this is not really confusing: we are just pointing to the interfaces on the machines. This makes me think that the machines are not powerful enough to drive 80Gb/s out.
