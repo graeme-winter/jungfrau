@@ -120,108 +120,6 @@ though maybe the "multi receiver" is what will be needed here, then finally use 
 
 N.B. this sets up a shared memory area which handles much of the state.
 
-## Test with the Grace Hopper
-
-Connected up the Connext-X 7, hard coded the IP addresses (which I will need to re-hard-code). New configuration needed to allow the routing:
-
-```
-# jcu01 - run
-# ./jungfrauDetectorServer_virtual -p 2000
-# ./jungfrauDetectorServer_virtual -p 2010
-hostname 192.168.200.200:2000+192.168.200.200:2010+
-
-# gh01 - run slsMultiReceiver 3000 2 0
-rx_hostname 192.168.200.201:3000+192.168.200.201:3001+
-
-0:udp_srcip 192.168.200.200
-0:udp_dstip 192.168.200.201
-0:udp_dstport 30000
-
-0:udp_srcip2 192.168.200.200
-0:udp_dstip2 192.168.200.201
-0:udp_dstport2 30001
-
-1:udp_srcip 192.168.200.200
-1:udp_dstip 192.168.200.201
-1:udp_dstport 30010
-
-1:udp_srcip2 192.168.200.200
-1:udp_dstip2 192.168.200.201
-1:udp_dstport2 30011
-
-numinterfaces 2
-
-rx_zmqfreq 1
-rx_zmqhwm 50000
-rx_zmqstream 1
-
-temp_control 1
-temp_threshold 55
-
-# exposure time, cycle time to use
-exptime 0.0005
-period 0.0005
-frames 1000
-
-# enable both network channels
-readoutspeed full_speed
-
-# save binary data (112 byte header / frame)
-fformat binary
-fwrite 1
-fpath /dev/shm/gw
-
-powerchip 1
-```
-
-N.B. be sure to enable jumbo frames on both ends i.e. `ifconfig <interface> mtu 9000`.
-
-Should result in something like:
-
-```
-- 09:03:12.961 INFO: [30000]:  Packet_Loss:0 (0%)  Used_Fifo_Max_Level:0 	Free_Slots_Min_Level:2499 	Current_Frame#:11001
-- 09:03:12.961 INFO: [30001]:  Packet_Loss:0 (0%)  Used_Fifo_Max_Level:0 	Free_Slots_Min_Level:2499 	Current_Frame#:11001
-- 09:03:13.079 INFO: [30010]:  Packet_Loss:0 (0%)  Used_Fifo_Max_Level:0 	Free_Slots_Min_Level:2499 	Current_Frame#:11001
-- 09:03:13.079 INFO: [30011]:  Packet_Loss:0 (0%)  Used_Fifo_Max_Level:0 	Free_Slots_Min_Level:2499 	Current_Frame#:11001
-- 09:03:13.080 INFO: Stopping Receiver
-- 09:03:13.080 INFO: Status: Transmitting
-- 09:03:13.080 INFO: Stopping Receiver
-- 09:03:13.080 INFO: Status: Transmitting
-- 09:03:13.080 INFO: Shut down of UDP port 30000
-- 09:03:13.081 INFO: Shut down of UDP port 30010
-- 09:03:13.081 INFO: Shut down of UDP port 30001
-- 09:03:13.081 INFO: Shut down of UDP port 30011
-- 09:03:13.091 INFO: Closed UDP port 30000
-- 09:03:13.091 INFO: Closed UDP port 30001
-- 09:03:13.091 INFO: Closed UDP port 30010
-- 09:03:13.091 INFO: Closed UDP port 30011
-- 09:03:13.091 INFO: Master File: /dev/shm/gw/run_master_1.json
-- 09:03:13.096 INFO: Status: finished
-- 09:03:13.096 INFO: Summary of Port 30010
-	Missing Packets		: 0
-	Complete Frames		: 10000
-	Last Frame Caught	: 11000
-- 09:03:13.096 INFO: Summary of Port 30011
-	Missing Packets		: 0
-	Complete Frames		: 10000
-	Last Frame Caught	: 11000
-- 09:03:13.096 INFO: Receiver Stopped
-- 09:03:13.096 INFO: Status: finished
-- 09:03:13.096 INFO: Status: idle
-- 09:03:13.096 INFO: Summary of Port 30000
-	Missing Packets		: 0
-	Complete Frames		: 10000
-	Last Frame Caught	: 11000
-- 09:03:13.096 INFO: Summary of Port 30001
-	Missing Packets		: 0
-	Complete Frames		: 10000
-	Last Frame Caught	: 11000
-- 09:03:13.096 INFO: Receiver Stopped
-- 09:03:13.096 INFO: Status: idle
-- 09:03:13.096 INFO: File Index: 2
-- 09:03:13.096 INFO: File Index: 2
-```
-
 ## Simulator Enhancements
 
 Want to be able to read data in to the simulator to transmit, either generated from Eiger data by performing an "[inverse correction](./PIXEL_SIMULATION.md)" or data captured from a real JUNGFRAU data collection.
@@ -234,7 +132,7 @@ Improvements proposed:
 - pre-compute data for emission, assuming enough memory is available. For one of the old com15 nodes we have ~40GB of memory free, which at 1MB / frame should allow for ~20k frames - looping this though is fine so really only need ~3600 frames or something then re-transmit
 - pre-computing most of the header then just updating a single frame counter seems easy
 
-Will work towards these in a branch of the slsDetector package.
+Will work towards these in a branch of the slsDetector package. Done.
 
 ## Simulator Machines
 
@@ -256,81 +154,100 @@ Machine:
 | Row 4  |   JTU2   |   JTU3   |   JTU4   |
 | Row 5  |   JTU2   |   JTU3   |   JTU4   |
 
+This is the "ultimate" configuration once we have the second ConnextX-7 card in the machine. In the meantime we can simulate a 5M (10 module) detector using two JTU machines and the JCU.
+
 Here the first two "JTU" entries are on one interface, the second two on the other interface, and the first of these on one port, the second on another port, so need to map all the ports and interfaces correctly to have this work _right_.
 
 Machine network / IP address hard coding:
 
 | Machine | Interface |   IP Addresss   |
 |---------|-----------|-----------------|
-| jcu01   | p5p2      | 192.168.200.200 |
-| jtu-01  | p2p1      | 192.168.200.211 |
-| jtu-01  | p2p2      | 192.168.200.221 |
-| jtu-02  | p2p1      | 192.168.200.212 |
-| jtu-02  | p2p2      | 192.168.200.222 |
-| jtu-03  | p2p1      | 192.168.200.213 |
-| jtu-03  | p2p2      | 192.168.200.223 |
-| jtu-04  | p2p1      | 192.168.200.214 |
-| jtu-05  | p2p2      | 192.168.200.224 |
+| jcu01   | p5p2      | 192.168.203.200 |
+| jtu-01  | p2p1      | 192.168.203.201 |
+| jtu-01  | p2p2      | 192.168.204.201 |
+| jtu-02  | p2p1      | 192.168.203.202 |
+| jtu-02  | p2p2      | 192.168.204.202 |
+| jtu-03  | p2p1      | 192.168.203.203 |
+| jtu-03  | p2p2      | 192.168.204.203 |
+| jtu-04  | p2p1      | 192.168.203.204 |
+| jtu-05  | p2p2      | 192.168.204.204 |
 
-All on `/255` mask, with settings kin to
+N.B. be sure to enable jumbo frames on both ends i.e. `ifconfig <interface> mtu 9000` and ensure that the routing tables are all correctly configured. The Grace Hopper configuration needs to put the interfaces on the 201 and 202 subnets:
 
-```
-5: p5p2: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9000 qdisc mq state UP group default qlen 1000
-    link/ether 98:03:9b:89:c1:a7 brd ff:ff:ff:ff:ff:ff
-    altname enp134s0f1
-    inet 192.168.200.200/24 brd 192.168.200.255 scope global noprefixroute p5p2
-       valid_lft forever preferred_lft forever
-    inet6 fe80::9a03:9bff:fe89:c1a7/64 scope link
-       valid_lft forever preferred_lft forever
-```
+| Machine | Interface   |   IP Addresss   |
+|---------|-------------|-----------------|
+|  gh-01  | enp1s0f1np1 | 192.168.201.201 |
+|  gh-01  | enp1s0f0np0 | 192.168.202.201 |
 
-## 9M Simulation
+All on `/24` mask, with routing via .254 gateway between subnets to reflect the switch configuration which has four vlans.
 
-This needs a [long config file](../005-simulator-config/9m-simulator.conf) but works correctly - if slowly. Also depends on using a modified version of the virtual server hacked around [in a fork of the repo](https://github.com/graeme-winter/slsDetectorPackage/pull/1) - it fails if you try to run at 1kHz which should in theory fit inside the available network switches.
+## 5M Simulation
 
-## 2M Simulation
+This needs a [long config file](../005-simulator-config/5m-simulator-a.conf) but works correctly at full speed. It depends on using a modified version of the virtual server hacked around [in a fork of the repo](https://github.com/graeme-winter/slsDetectorPackage/pull/1) which is set up to:
 
-### 2M from one machine, two interfaces
+1. correctly bond the sending interfaces
+2. correctly route the packets
+3. hard clocked to send packets on the right timescales
+4. reads raw data from pre-canned data files but rewrites the packet headers in flight
 
-This also fails at full speed from one machine, using two full interfaces. To reproduce this failure:
+To execute the simulation will require a large number of terminals to connect to the various test machines for running the frame receivers and 10x jungfrau simulators:
 
-1. ssh into i24-jtu-01, run 4 login sessions, each will run one full module of the simulation - run as `jungfrauDetectorServer_virtual -p PORT` where `PORT` is 2020, 2030, 2040, 2050 (as configured in the 2M configuration file.)
-2. ssh into bl24i-sc-gh-01, run `slsMultiReceiver 3000 4 0` - this will spin up four receivers which will be configured with... (watch the output of this window for errors)
+1. ssh to bl24i-sc-jcu01, run two login sessions, each one full module of the simulation, run: `jungfrauDetectorServer_virtual -p PORT` where `PORT` is `2000` and `2010` for the first two modules
+2. ssh into i24-jtu-01, run 4 login sessions, each will run one full module of the simulation - run as `jungfrauDetectorServer_virtual -p PORT` where `PORT` is 2020, 2030, 2040, 2050
+3. ssh into i24-jtu-03, run 4 login sessions, each will run one full module of the simulation - run as `jungfrauDetectorServer_virtual -p PORT` where `PORT` is 2020, 2030, 2040, 2050
+4. ssh into bl24i-sc-gh-01, run `sudo slsMultiReceiver 3000 10 0` - this will spin up 10 receivers
 
 At this point the desktop may look like:
 
 ![Desktop image](./simulator-desktop.png)
 
-3. on an i24 machine run `sls_detector_put config ~/git/jungfrau/005-simulator-config/2m-simulator-1.conf` This will produce a lot of output... you can then trigger acquisition with `sls_detector_acquire` which should work fine at 1000Hz (1.0 / (period + exptime)). Lowering the exposure time and period is sufficient with e.g. `sls_detector_put period 0.00025` is enough to trigger packet loss...
-
-### 2M from two machines, one interface on each
-
-Since a 1M works fine, we should be able to do a 1M from two machines, right? Yes, yes we can. This bodes well. You need to apply some diffs to the 2M config tho:
+5. on an i24 machine run `sls_detector_put config ~/git/jungfrau/005-simulator-config/5m-simulator-a.conf` This will produce a lot of output... you can then trigger acquisition with `sls_detector_acquire` which should work fine at 1000Hz (1.0 / (period + exptime)). 
+6. on bl24i-sc-gh-01 run 20 x "canary" zeroMQ receivers: these will just read the packets to load the system and then capture the time since first packet arrived:
 
 ```
-< hostname 192.168.200.211:2020+192.168.200.211:2030+192.168.200.212:2040+192.168.200.212:2050+
----
-> hostname 192.168.200.211:2020+192.168.200.211:2030+192.168.200.221:2020+192.168.200.221:2030+
-27c27
-< 2:udp_srcip 192.168.200.212
----
-> 2:udp_srcip 192.168.200.221
-31c31
-< 2:udp_srcip2 192.168.200.212
----
-> 2:udp_srcip2 192.168.200.221
-35c35
-< 3:udp_srcip 192.168.200.212
----
-> 3:udp_srcip 192.168.200.221
-39c39
-< 3:udp_srcip2 192.168.200.212
----
-> 3:udp_srcip2 192.168.200.221
+cd git/jungfrau/007-zeromq
+for ((j = 1; j <= 20; j++)); do (python3 stream_capture.py `echo $((j + 30000))` > ${j}.x &) ; done
 ```
 
-Once you are used to configuring these beasties, this is not really confusing: we are just pointing to the interfaces on the machines. This makes me think that the machines are not powerful enough to drive 80Gb/s out.
+7. set up a more challenging test environment: exposure time / period set to 0.25ms (i.e. 2000Hz cycle) with `sls_detector_put exptime 0.00025` and `sls_detector_put period 0.00025` then set the acquisition to 1,000,000 frames with `sls_detector_put frames 1000000`. This is viewed as being a reasonable challenge, as it corresponds to ~ 8 minutes of full rate sample injector experiment.
+8. go.
 
-## 5M Simulation
+Mid way through things should look like this:
 
-OK, so we can do a 2M at flat out, can we pull the same trick with a 5? Won't go flat out, but does work... just need to top out at 0.8ms cycle time.
+![Desktop image](./simulator-desktop-mid.png)
+
+And at the end like this:
+
+![Desktop image](./simulator-desktop-end.png)
+
+Key visible points:
+1. the acquisition shows 10 x 2 x 1,000,000 frames acquired
+2. the data were sent in 499.995s or so
+3. mid-run the load on the system was reasonable, well inside the envelope (even allowing for an 80% increase to go from 10 to 18 modules)
+
+The canaries were recording the timestamps which can be used to infer an overall delay:
+
+![Simulator delay image](./simulator-delay.png)
+
+Here we can see there _was_ a delay in the data arrival however this topped out at ~10s over 500s i.e. around 2% and no data were lost, and the system had plenty of capacity for further buffering. It seems likely that the delay was somewhat induced by the Python implementation of the zeroMQ so a C++ version should be developed (and will be needed in production anyway.)
+
+## Simulation Conclusion
+
+### Executive Summary
+
+The 5M simulation shows that the Grace Hopper system has more than enough capability to capture data at full frame rate for a 5M. With a second ConnectX-7 card (around £2.5k) we should be able to run the full 9M capture into a single system.
+
+### Effort Justification
+
+The majority of the work here was needed to build a simulation infrastructure which will be used for any solution e.g. GPU / Grace Hopper or FPGA / JungfrauJoch. 1,000,000 frame simulation feels like a reasonable baseline: in reality this is unlikely to be performed since the fixed target system takes some measurable time to move from one position on the grid to the next, even if we are recording 100 images at every point.
+
+### Decision Point
+
+Do we proceed with the Grace Hopper system, or decide to use the JungfrauJoch? Factors:
+- we have in house expertise in GPU programming
+- this purely software solution is relatively simple and building on the SLS detector system
+- this is not a proven system
+- FPGA technology is ultimately better suited to the problem but comes with very large learning cost
+- building our own solution allows us to incorporate customised data decimation / blank data veto
+
+I advise that we proceed with the Grace Hopper work and invest in a second ConnectX-7 card. Meanwhile we should develop the live data correction / compression / analysis against the 5M simulator.
