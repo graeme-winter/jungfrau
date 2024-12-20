@@ -6,7 +6,8 @@ The [SLS detector software](https://slsdetectorgroup.github.io/devdoc/) includes
 git clone git@github.com:slsdetectorgroup/slsDetectorPackage.git
 mkdir slsDetectorPackage-build
 cd slsDetectorPackage-build
-cmake -DCMAKE_INSTALL_PREFIX=${HOME}/sls -DSLS_USE_SIMULATOR=ON ../slsDetectorPackage
+cmake -DCMAKE_INSTALL_PREFIX=${HOME}/sls -DSLS_USE_SIMULATOR=ON \
+  ../slsDetectorPackage
 make
 ```
 
@@ -201,12 +202,20 @@ At this point the desktop may look like:
 
 ![Desktop image](./simulator-desktop.png)
 
-5. on an i24 machine run `sls_detector_put config ~/git/jungfrau/005-simulator-config/5m-simulator-a.conf` This will produce a lot of output... you can then trigger acquisition with `sls_detector_acquire` which should work fine at 1000Hz (1.0 / (period + exptime)). 
+5. on an i24 machine run:
+
+```
+sls_detector_put config ~/git/jungfrau/005-simulator-config/5m-simulator-a.conf
+```
+This will produce a lot of output... you can then trigger acquisition with `sls_detector_acquire` which should work fine at 1000Hz (1.0 / (period + exptime)).
+
 6. on bl24i-sc-gh-01 run 20 x "canary" zeroMQ receivers: these will just read the packets to load the system and then capture the time since first packet arrived:
 
 ```
 cd git/jungfrau/007-zeromq
-for ((j = 1; j <= 20; j++)); do (python3 stream_capture.py `echo $((j + 30000))` > ${j}.x &) ; done
+for ((j = 1; j <= 20; j++)); 
+  do (python3 stream_capture.py `echo $((j + 30000))` > ${j}.x &) ; 
+done
 ```
 
 7. set up a more challenging test environment: exposure time / period set to 0.25ms (i.e. 2000Hz cycle) with `sls_detector_put exptime 0.00025` and `sls_detector_put period 0.00025` then set the acquisition to 1,000,000 frames with `sls_detector_put frames 1000000`. This is viewed as being a reasonable challenge, as it corresponds to ~ 8 minutes of full rate sample injector experiment.
@@ -287,3 +296,7 @@ while True:
 ```
 
 There are numerous ways that this could be improved.
+
+## Appendix: Hacked SLS Detector
+
+Currently located at: https://github.com/graeme-winter/slsDetectorPackage/pull/1
