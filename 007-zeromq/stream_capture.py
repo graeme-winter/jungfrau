@@ -27,7 +27,7 @@ while True:
     header = json.loads(messages[0])
     if header["bitmode"] == 0:
         break
-    n = int(header["frameNumber"])
+    n = int(header["frameIndex"])
     found.append(n)
 
 t1 = time.time()

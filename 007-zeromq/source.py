@@ -1,6 +1,8 @@
 import json
+import sys
 import time
 
+import tqdm
 import zmq
 
 host = "0.0.0.0"
@@ -51,13 +53,17 @@ message = {
 }
 
 t0 = time.time()
-for j in range(10000):
-    message["frameNumber"] = j
+for j in tqdm.tqdm(range(int(sys.argv[1]))):
+    message["frameIndex"] = j
     header = json.dumps(message)
     socket.send_multipart([header.encode(), body])
+    #time.sleep(0.00032)
+
 t1 = time.time()
 
-header = json.dumps({"frameNumber": -1, "bitmode": 0})
+message["frameIndex"] = -1
+message["bitmode"] = 0
+header = json.dumps(message)
 socket.send_multipart([header.encode()])
 
 time.sleep(1)
