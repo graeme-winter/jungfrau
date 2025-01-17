@@ -13,3 +13,6 @@
 [submodule "003-project-general-compression/bitshuffle"]
 	path = 003-project-general-compression/bitshuffle
 	url = git@github.com:kiyo-masui/bitshuffle.git
+[submodule "101-data-capture/bitshuffle"]
+	path = 101-data-capture/bitshuffle
+	url = git@github.com:kiyo-masui/bitshuffle.git
