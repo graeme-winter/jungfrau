@@ -180,7 +180,26 @@ N.B. be sure to enable jumbo frames on both ends i.e. `ifconfig <interface> mtu 
 |  gh-01  | enp1s0f1np1 | 192.168.201.201 |
 |  gh-01  | enp1s0f0np0 | 192.168.202.201 |
 
-All on `/24` mask, with routing via .254 gateway between subnets to reflect the switch configuration which has four vlans.
+All on `/24` mask, with routing via .254 gateway between subnets to reflect the switch configuration which has four vlans. The routing needs:
+
+```bash
+sudo ifconfig p5p2 192.168.203.200 netmask 255.255.255.0 mtu 9000
+
+sudo ip route add 192.168.203.254 dev p5p2
+sudo ip route add 192.168.202.0/24 via 192.168.203.254
+sudo ip route add 192.168.201.0/24 via 192.168.203.254
+```
+
+On the JCU machine - to set the correct IP address etc. then on the 4 x JTU machines:
+
+```bash
+sudo ip route add 192.168.203.254 dev p2p1
+sudo ip route add 192.168.204.254 dev p2p2
+sudo ip route add 192.168.201.0/24 via 192.168.203.254
+sudo ip route add 192.168.202.0/24 via 192.168.204.254
+```
+
+To get the routing correct: with this set up you should be able to ping from any computer to any other (the ping return message requires correct routing on the _other_ computer.)
 
 ## 5M Simulation
 
