@@ -199,7 +199,12 @@ sudo ip route add 192.168.201.0/24 via 192.168.203.254
 sudo ip route add 192.168.202.0/24 via 192.168.204.254
 ```
 
-To get the routing correct: with this set up you should be able to ping from any computer to any other (the ping return message requires correct routing on the _other_ computer.)
+To get the routing correct: with this set up you should be able to ping from any computer to any other (the ping return message requires correct routing on the _other_ computer.) If anything happens to the routing on the Grace Hopper box you'll also need this:
+
+```bash
+ip route add 192.168.204.0/24 via 192.168.202.254
+ip route add 192.168.203.0/24 via 192.168.201.254
+```
 
 ## 5M Simulation
 
